@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboards</title>
+    <style>
+        .shortcuts {
+            list-style: disc;
+            padding: 0 0 0 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .shortcuts li {
+            display: list-item; /* Ensure list-item display */
+            padding: 5px 0;
+        }
+
+        .shortcuts li:last-child {
+            border-bottom: none;
+        }
+
+        .shortcuts a {
+            text-decoration: none;
+            color: silver;
+        }
+
+        .shortcuts a:hover {
+            color: #00DC82;
+        }  
+    
+        html, body {
+            color: silver;
+            background-color: black;
+            font-size: 35px;
+        }    
+    </style>
+</head>
+<body background-color="black">
+    <h1>Dashboard pages</h1>
+    <div id="divDisplay">
+        <ul class="shortcuts" id="ulShortcuts">
+        </ul>
+    </div>
+    
+    <script>
+        function getRandomInteger(min, max) {
+          min = Math.ceil(min); // Ensure min is an integer
+          max = Math.floor(max); // Ensure max is an integer
+          return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        
+        const sites = [
+			{ "name": "Google", "url": "https://www.google.com" },
+            { "name": "Bing", "url": "https://www.bing.com/" }
+        ];
+   
+        let currentSiteIndex = 0;
+        
+        const timeout = 30; // seconds before next page is loaded
+        
+        function loadNextSite() {
+            if (document.timer) {
+                clearTimeout(document.timer);
+            }
+        
+            if (currentSiteIndex == sites.length) {
+                window.location.reload();
+                return;
+            }
+
+            // Prevent lcd screen burn
+            document.body.style.padding = getRandomInteger(10, 15) +  "px"; // Sets random padding on all sides
+        
+            var currentUrl = sites[currentSiteIndex].url
+
+            let w = window.open(sites[currentSiteIndex].url, 'dashboard_window');
+            w.focus();
+
+            window.open(sites[currentSiteIndex].url, 'dashboard_window').location = currentUrl;
+                        
+            // Show current loaded page
+            var links = "";
+            sites.forEach((item) => {
+                //links = links + `<li><a href="${item.url}" target="_blank">${item.url == currentUrl ? '&#9889; ' : ""}${item.name}<\/a><\/li>`;
+                links = links + `<li><a href="${item.url}" target="_blank">${item.url == currentUrl ? '&#128073; ' : ""}${item.name}<\/a><\/li>`;
+            });
+            document.getElementById("ulShortcuts").innerHTML = links;
+
+            document.title = `Dash ${currentSiteIndex + 1} / ${sites.length} (${sites[currentSiteIndex].name})`;
+
+            // Next
+            currentSiteIndex = (currentSiteIndex + 1) % (sites.length + 1);
+            document.timer = setTimeout(loadNextSite, timeout * 1000);
+        }
+
+        loadNextSite();
+    </script>
+</body>
+</html>
